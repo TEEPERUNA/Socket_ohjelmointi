@@ -33,4 +33,4 @@ while count < 100:
     iphdr += b'\x80\x06\x00\x00'    # 3rd row, TTl + PROTOL + HDR_CKSUM
     iphdr += struct.pack('>I4s', srcIP, target) # 4th and 5th row: IPv4 addrs
     # to make TCP hdr
-    tcphdr = struct.pack('>HH')
+    tcphdr = struct.pack('>HH', srcPort, 80, random.randint(0,2**32-1), 0)
