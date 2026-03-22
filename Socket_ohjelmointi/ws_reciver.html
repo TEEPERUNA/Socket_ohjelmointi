@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebSocket</title>
+    <style>
+      .big {
+        font-size: 200px;
+        line-height: 1;
+        display: inline-block;
+        margin-right: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+
+    <div>
+      <span id="blackCount" class="big" style="color:black;">0</span>
+      <span id="redCount" class="big" style="color:red;">0</span>
+      <span id="greenCount" class="big" style="color:green;">0</span>
+    </div>
+
+    <script>
+      var ws = new WebSocket("ws://localhost:11111/");
+
+      var prev = null;
+      var blackCount = 0;
+      var redCount = 0;
+      var greenCount = 0;
+      var totalMessages = 0;
+
+      ws.onmessage = function (event) {
+        var curr = new Date().getTime();
+        var diff = prev !== null ? curr - prev : 0;
+        prev = curr;
+
+        var messages = document.getElementById('messages');
+        var message = document.createElement('li');
+        var content = document.createTextNode(event.data + ' ' + diff + 'ms');
+
+        message.appendChild(content);
+
+        if (diff < 1500) {
+          message.style.color = 'red';
+          redCount++;
+        } else if (diff > 3500) {
+          message.style.color = 'green';
+          greenCount++;
+        } else {
+          blackCount++;
+        }
+
+        messages.appendChild(message);
+
+        if (messages.childElementCount > 10) {
+          messages.removeChild(messages.firstChild);
+        }
+
+        document.getElementById('blackCount').textContent = blackCount;
+        document.getElementById('redCount').textContent = redCount;
+        document.getElementById('greenCount').textContent = greenCount;
+
+        totalMessages++;
+        if (totalMessages > 100) {
+          console.log("Over 100 messages received. Take screenshot now.");
+        }
+      };
+    </script>
+  </body>
+</html>
